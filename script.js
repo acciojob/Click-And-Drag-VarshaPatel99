@@ -1,44 +1,45 @@
-const container = document.querySelector(".container");
-const cubes = document.querySelectorAll(".cube");
+const container = document.querySelector('.container');
+const cubes = document.querySelectorAll('.cube');
 
-let selectedCube = null;
+let currentCube = null;
 let offsetX = 0;
 let offsetY = 0;
 
 cubes.forEach(cube => {
-  cube.style.position = "absolute";
-
-  cube.addEventListener("mousedown", (e) => {
-    selectedCube = cube;
+  cube.addEventListener('mousedown', (e) => {
+    currentCube = cube;
 
     const rect = cube.getBoundingClientRect();
-
     offsetX = e.clientX - rect.left;
     offsetY = e.clientY - rect.top;
+
+    cube.style.position = 'absolute';
+    cube.style.zIndex = '1000';
   });
 });
 
-document.addEventListener("mousemove", (e) => {
-  if (!selectedCube) return;
+document.addEventListener('mousemove', (e) => {
+  if (!currentCube) return;
 
   const containerRect = container.getBoundingClientRect();
 
-  let x = e.clientX - containerRect.left - offsetX;
-  let y = e.clientY - containerRect.top - offsetY;
+  let left = e.clientX - containerRect.left - offsetX;
+  let top = e.clientY - containerRect.top - offsetY;
 
-  // Boundary conditions
-  const maxX = container.clientWidth - selectedCube.offsetWidth;
-  const maxY = container.clientHeight - selectedCube.offsetHeight;
+  left = Math.max(
+    0,
+    Math.min(left, container.clientWidth - currentCube.offsetWidth)
+  );
 
-  if (x < 0) x = 0;
-  if (y < 0) y = 0;
-  if (x > maxX) x = maxX;
-  if (y > maxY) y = maxY;
+  top = Math.max(
+    0,
+    Math.min(top, container.clientHeight - currentCube.offsetHeight)
+  );
 
-  selectedCube.style.left = x + "px";
-  selectedCube.style.top = y + "px";
+  currentCube.style.left = `${left}px`;
+  currentCube.style.top = `${top}px`;
 });
 
-document.addEventListener("mouseup", () => {
-  selectedCube = null;
+document.addEventListener('mouseup', () => {
+  currentCube = null;
 });
